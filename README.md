@@ -78,6 +78,9 @@ astroids/
 
 ## Change Log
 
+### v1.212 (2025-05-16)
+- G: v1.212 updated readme AGAIN again
+
 ### v1.211 (2025-05-16)
 - G: v1.211 updated readme AGAIN
 
@@ -112,7 +115,6 @@ astroids/
 ## Customization Tips
 - Want more difficulty? Decrease `ASTEROID_SPAWN_RATE` in `constants.py`
 - Want faster action? Adjust `PLAYER_SPEED` or `PLAYER_SHOOT_COOLDOWN`
-- Add powerups or effects by extending the `Shot` or `Player` classes
 
 ---
 
