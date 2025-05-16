@@ -1,5 +1,6 @@
+# asteroid.py
 from circleshape import *
-from constants import ASTEROID_WIDTH, ASTEROID_MIN_RADIUS, ASTEROID_MAX_RADIUS
+from constants import ASTEROID_WIDTH, ASTEROID_MIN_RADIUS
 import random
 
 class Asteroid(CircleShape):
@@ -12,17 +13,19 @@ class Asteroid(CircleShape):
         pygame.draw.circle(screen, (255, 255, 255), (self.position.x, self.position.y), self.radius, ASTEROID_WIDTH)
 
     def update(self, dt):
-        self.position += (self.velocity * dt)
+        self.position += self.velocity * dt
 
     def split(self):
         self.kill()
         if self.radius <= ASTEROID_MIN_RADIUS:
-            return
-        new_angle = random.uniform(20, 50)
-        new_asteroid1_angle = pygame.Vector2(0, 1).rotate(self.rotation + new_angle)
-        new_asteroid2_angle = pygame.Vector2(0, 1).rotate(self.rotation - new_angle)
+            print(f"Splitting asteroid with radius: {self.radius}")
+            print("Destroyed small asteroid. +10 points.")
+            return 10
         new_radius = self.radius - ASTEROID_MIN_RADIUS
-
-        for new_asteroid_angle in [new_asteroid1_angle, new_asteroid2_angle]:
+        angle_offset = random.uniform(20, 50)
+        directions = [self.rotation + angle_offset, self.rotation - angle_offset]
+        for angle in directions:
+            new_velocity = pygame.Vector2(0, 1).rotate(angle) * self.velocity.length()
             new_asteroid = Asteroid(self.position.x, self.position.y, new_radius)
-            new_asteroid.velocity = new_asteroid_angle * self.velocity.length()        
+            new_asteroid.velocity = new_velocity
+        return 0
