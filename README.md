@@ -1,6 +1,7 @@
 # Asteroids (Python / Pygame)
+<!-- Built as part of a personal assignment to refresh and rebuild foundational coding skills -->
 
-A classic-style arcade **Asteroids** game clone built using **Pygame**. This version features player movement, asteroid splitting, shooting mechanics, scoring, lives, respawning with invincibility, and persistent high score tracking.
+A classic-style arcade **Asteroids** game clone built using **Pygame**. This game was originally built as part of a self-guided assignment to help refresh my coding knowledge and re-engage with Python development. It features player movement, asteroid splitting, shooting mechanics, scoring, lives, respawning with invincibility, and persistent high score tracking.
 
 ---
 
@@ -17,6 +18,22 @@ A classic-style arcade **Asteroids** game clone built using **Pygame**. This ver
 - Life system with 3 lives and on-death respawning
 - 3-second invincibility (with visual flashing) after respawn
 - Game over screen with restart and quit options
+
+---
+
+## Planned Features (Assignment Suggestions)
+- ~~Add a scoring system~~
+- ~~Implement multiple lives and respawning~~
+- Add an explosion effect for the asteroids
+- Add acceleration to the player movement
+- Make the objects wrap around the screen instead of disappearing
+- Add a background image
+- Create different weapon types
+- Make the asteroids lumpy instead of perfectly round
+- Make the ship have a triangular hit box instead of a circular one
+- Add a shield power-up
+- Add a speed power-up
+- Add bombs that can be dropped
 
 ---
 
@@ -77,6 +94,9 @@ astroids/
 ---
 
 ## Change Log
+
+### v1.212001 (2025-05-16)
+- G: v1.212001 updated readme AGAIN again (i swear this is the last)
 
 ### v1.212 (2025-05-16)
 - G: v1.212 updated readme AGAIN again
