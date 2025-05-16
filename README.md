@@ -78,8 +78,14 @@ astroids/
 
 ## Change Log
 
+### v1.211 (2025-05-16)
+- G: v1.211 updated readme AGAIN
+
 ### v1.21 (2025-05-16)
 - G: v1.21 updated readme
+
+### v1.2 (2025-05-16)
+- Added `update_changelog.py` script for automated changelog generation and Git integration
 
 ### v1.11 (2025-05-16)
 - Restructured project folders for clarity and scalability
