@@ -3,13 +3,12 @@ __pycache__/
 *.py[cod]
 *.pyo
 
-# Virtual environment
+# Virtual environment folders
 venv/
 .venv/
-env/
 ENV/
 
-# IDE/editor-specific
+# Editor/project configs
 .vscode/
 .idea/
 *.sublime-project
@@ -19,13 +18,17 @@ ENV/
 .DS_Store
 Thumbs.db
 
-# Python dependency files
+# Logs and temp
+*.log
+*.tmp
+
+# Save data
+/data/highscore.txt
+
+# Build or packaging artifacts
 *.egg-info/
 *.egg
-*.log
 
-# High score save file (optional, if user-specific)
-data/highscore.txt
-
-# Pygame cache or temp files (if any)
-*.tmp
+# Ignore local Python utility scripts (optional)
+# Uncomment if you want to exclude utility scripts like this:
+# update_changelog.py
