@@ -76,6 +76,33 @@ astroids/
 
 ---
 
+## Change Log
+
+### v1.21 (2025-05-16)
+- G: v1.21 updated readme
+
+### v1.11 (2025-05-16)
+- Restructured project folders for clarity and scalability
+- Added `README.md` and `.gitignore`
+
+### v1.1 (2025-05-16)
+- Implemented scoring system based on survival time and asteroid destruction
+- Added player lives and respawn mechanics with temporary invincibility
+
+### v1.0 (2025-05-15)
+- Complete playable version of Asteroids
+
+### v0.9 (2025-05-14)
+- Added shooting and projectile system
+
+### v0.8 (2025-05-14)
+- Player object created with rotation and movement
+
+### v0.1 (2025-05-14)
+- Initial playable prototype with movement and basic asteroid logic
+
+---
+
 ## Customization Tips
 - Want more difficulty? Decrease `ASTEROID_SPAWN_RATE` in `constants.py`
 - Want faster action? Adjust `PLAYER_SPEED` or `PLAYER_SHOOT_COOLDOWN`
