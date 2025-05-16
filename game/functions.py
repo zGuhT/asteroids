@@ -16,7 +16,7 @@ def draw_multiline_text(screen, text, font, color, center_pos, line_spacing=10):
         start_y += line_surface.get_height() + line_spacing
 
 # Load high score from text file
-def load_high_score(filename="highscore.txt"):
+def load_high_score(filename="data/highscore.txt"):
     try:
         with open(filename, "r") as file:
             return int(file.read())
@@ -24,6 +24,6 @@ def load_high_score(filename="highscore.txt"):
         return 0  # Default if file is missing or invalid
 
 # Save high score to text file    
-def save_high_score(score, filename="highscore.txt"):
+def save_high_score(score, filename="data/highscore.txt"):
     with open(filename, "w") as file:
         file.write(str(score))

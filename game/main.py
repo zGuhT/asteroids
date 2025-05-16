@@ -2,12 +2,12 @@
 import pygame
 import sys
 
-from constants import *
-from player import *
-from asteroid import *
-from asteroidfield import *
-from shot import *
-from functions import *
+from game.constants import *
+from game.player import Player
+from game.asteroid import Asteroid
+from game.asteroidfield import AsteroidField
+from game.shot import Shot
+from game.functions import load_high_score, save_high_score, draw_multiline_text
 
 def main():
     pygame.init()

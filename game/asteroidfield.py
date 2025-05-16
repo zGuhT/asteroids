@@ -1,8 +1,8 @@
 # asteroidfield.py
 import pygame
 import random
-from asteroid import Asteroid
-from constants import *
+from game.asteroid import Asteroid
+from game.constants import *
 
 class AsteroidField(pygame.sprite.Sprite):
     edges = [

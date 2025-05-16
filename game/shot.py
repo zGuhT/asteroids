@@ -1,6 +1,6 @@
 # shot.py
-from circleshape import *
-from constants import SHOT_WIDTH, SHOT_RADIUS
+from game.circleshape import *
+from game.constants import SHOT_WIDTH, SHOT_RADIUS
 
 class Shot(CircleShape):
     containers = ()

@@ -1,2 +1,31 @@
-/venv/
-/__pycache__/
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+
+# IDE/editor-specific
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Python dependency files
+*.egg-info/
+*.egg
+*.log
+
+# High score save file (optional, if user-specific)
+data/highscore.txt
+
+# Pygame cache or temp files (if any)
+*.tmp

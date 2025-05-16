@@ -1,7 +1,7 @@
 # player.py
-from circleshape import *
-from constants import *
-from shot import *
+from game.circleshape import *
+from game.constants import *
+from game.shot import *
 
 class Player(CircleShape):
     def __init__(self, x, y):
