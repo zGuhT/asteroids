@@ -63,12 +63,13 @@ It now features custom graphics, music, sound effects, power-ups, bombs, and a f
 Install dependencies using:
 ```bash
 pip install -r requirements.txt
-exit
+```
 
 ---
 
 ## File Structure
 
+```bash
 astroids/
 ├── assets/                    # images, sprites, sound effects, music
 │   ├── heart.png
@@ -98,6 +99,7 @@ astroids/
 ├── README.md
 ├── requirements.txt
 └── run_game.py                # Main game entry point
+```
 
 ---
 
@@ -108,6 +110,9 @@ astroids/
 ---
 
 ## Change Log
+
+### v2.04 (2025-05-17)
+- v2.04 fixed readme
 
 ### v2.03 (2025-05-17)
 - v2.03 fixed readme
