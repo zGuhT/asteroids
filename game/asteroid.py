@@ -1,4 +1,5 @@
 import random
+import pygame
 from game.circleshape import CircleShape
 from game.constants import *
 from game.explosion import ExplosionParticle

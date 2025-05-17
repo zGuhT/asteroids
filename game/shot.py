@@ -1,3 +1,4 @@
+import pygame
 from game.circleshape import CircleShape
 from game.constants import *
 from game.functions import wrap_position

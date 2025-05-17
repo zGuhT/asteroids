@@ -108,6 +108,9 @@ astroids/
 
 ## Change Log
 
+### v2.02 (2025-05-17)
+- v2.02 fixed crash bug
+
 ### v2.01 (2025-05-17)
 - v2.01 cleaned up some of the redundant code and added commenting to explain all the blocks
 
