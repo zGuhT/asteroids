@@ -47,6 +47,8 @@ def main():
     # Assets
     heart_image = pygame.image.load("assets/heart.png").convert_alpha()
     heart_image = pygame.transform.scale(heart_image, (48, 48))  # Resize if needed
+    background = pygame.image.load("assets/game_background_thomas.png").convert()
+    background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
     # Game objects
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
@@ -59,7 +61,7 @@ def main():
                 return "quit"
 
         # Clear screen
-        screen.fill((0, 0, 0))
+        screen.blit(background, (0, 0))
 
         # Update all updatable objects
         updatable.update(dt)

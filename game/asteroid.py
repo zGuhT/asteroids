@@ -11,19 +11,36 @@ class Asteroid(CircleShape):
         self.velocity = pygame.Vector2(0, -1).rotate(self.rotation) * 1.2
 
     def draw(self, screen):
-        pygame.draw.circle(screen, (255, 255, 255), (self.position.x, self.position.y), self.radius, ASTEROID_WIDTH)
+        surface = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
+
+        pygame.draw.circle(surface, (255, 255, 255, 180), (self.radius, self.radius), self.radius + 1, 2)
+
+        # Inner translucent fill
+        pygame.draw.circle(surface, (200, 200, 255, 60), (self.radius, self.radius), self.radius)
+
+        # Brighter outer ring
+        pygame.draw.circle(surface, (135, 206, 250, 200), (self.radius, self.radius), self.radius, 2)
+
+        screen.blit(surface, (self.position.x - self.radius, self.position.y - self.radius))
 
     def update(self, dt):
         self.position += self.velocity * dt
 
     def split(self, explosion_group):
         scale = self.radius / ASTEROID_MAX_RADIUS
-        if self.radius >= ASTEROID_MAX_RADIUS * 0.9:
-            color = (255, 100, 0)
-        elif self.radius > ASTEROID_MIN_RADIUS * 1.5:
-            color = (255, 200, 50)
-        else:
-            color = (255, 255, 255)
+        # if self.radius >= ASTEROID_MAX_RADIUS * 0.9:
+        #     color = (173, 216, 230)
+        # elif self.radius > ASTEROID_MIN_RADIUS * 1.5:
+        #     color = (102, 255, 255)
+        # else:
+        #     color = (255, 255, 255)
+        color = random.choice([
+            (173, 216, 230),  # Light blue
+            (255, 182, 193),  # Pink
+            (204, 153, 255),  # Purple
+            (255, 255, 153),  # Yellow
+            (102, 255, 255),  # Aqua
+        ])
         for _ in range(int(10 * scale) + 5):
             explosion_group.add(ExplosionParticle(self.position, scale, color))
         self.kill()

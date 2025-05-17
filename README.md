@@ -24,8 +24,8 @@ A classic-style arcade **Asteroids** game clone built using **Pygame**. This gam
 ## Planned Features (Assignment Suggestions)
 - ~~Add a scoring system~~
 - ~~Implement multiple lives and respawning~~
-- Add an explosion effect for the asteroids
-- Add acceleration to the player movement
+- ~~Add an explosion effect for the asteroids~~
+- ~~Add acceleration to the player movement~~
 - Make the objects wrap around the screen instead of disappearing
 - Add a background image
 - Create different weapon types
@@ -94,6 +94,9 @@ astroids/
 ---
 
 ## Change Log
+
+### v1.5 (2025-05-17)
+- v1.5 thomasteroids - changed to thomas the tank theme, added explosion effects and some player acceleration
 
 ### v1.3 (2025-05-17)
 - v1.3 asteroids added explosion effect and heart image for remaining lives
