@@ -63,6 +63,7 @@ It now features custom graphics, music, sound effects, power-ups, bombs, and a f
 Install dependencies using:
 ```bash
 pip install -r requirements.txt
+exit
 
 ---
 
@@ -107,6 +108,9 @@ astroids/
 ---
 
 ## Change Log
+
+### v2.03 (2025-05-17)
+- v2.03 fixed readme
 
 ### v2.02 (2025-05-17)
 - v2.02 fixed crash bug
