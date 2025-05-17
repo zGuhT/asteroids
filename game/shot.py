@@ -1,6 +1,7 @@
 # shot.py
 from game.circleshape import *
-from game.constants import SHOT_WIDTH, SHOT_RADIUS
+from game.constants import *
+from game.functions import *
 
 class Shot(CircleShape):
     containers = ()
@@ -11,10 +12,13 @@ class Shot(CircleShape):
         self.image = pygame.image.load("assets/bullet_coal.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (48, 48))  # Adjust size if needed
 
-
     def draw(self, screen):
         rect = self.image.get_rect(center=(int(self.position.x), int(self.position.y)))
-        screen.blit(self.image, rect)
+
+        for dx in (-SCREEN_WIDTH, 0, SCREEN_WIDTH):
+            for dy in (-SCREEN_HEIGHT, 0, SCREEN_HEIGHT):
+                screen.blit(self.image, rect.move(dx, dy))
 
     def update(self, dt):
         self.position += self.velocity * dt
+        self.position = wrap_position(self.position, SCREEN_WIDTH, SCREEN_HEIGHT)

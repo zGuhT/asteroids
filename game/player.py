@@ -1,40 +1,72 @@
-# player.py
 from game.circleshape import *
 from game.constants import *
 from game.shot import *
+from game.functions import *
+import math
+import time
+import pygame
 
 class Player(CircleShape):
-    def __init__(self, x, y):
+    def __init__(self, x, y, shoot_sound=None):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.timer = 0
         self.visible = True
         self.flash_timer = 0
-        self.flash_duration = 3  # total flash time in seconds
-        self.flash_interval = 0.1  # toggle every 0.1 seconds
+        self.flash_duration = 3
+        self.flash_interval = 0.1
         self.velocity = pygame.Vector2(0, 0)
-        self.acceleration = 400  # units per second²
-        self.max_speed = 300     # limit max velocity
-        self.friction = 0.98     # velocity decay
+        self.acceleration = 400
+        self.max_speed = 300
+        self.friction = 0.98
         self.image = pygame.image.load("assets/player_thomas.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (128, 128))  # or adjust as needed
-        self.image = pygame.transform.rotate(self.image, 90)  # rotate clockwise 90°
-
-    def triangle(self):
-        forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
-        a = self.position + forward * self.radius
-        b = self.position - forward * self.radius - right
-        c = self.position - forward * self.radius + right
-        return [a, b, c]
+        self.image = pygame.transform.scale(self.image, (128, 128))
+        self.image = pygame.transform.rotate(self.image, 90)
+        self.shoot_cooldown = PLAYER_SHOOT_COOLDOWN
+        self.speed_boost_timer = 0
+        self.rapid_fire_timer = 0
+        self.shield_timer = 0
+        self.shield = False
+        self.shoot_sound = shoot_sound
 
     def draw(self, screen):
         if not self.visible:
-            return  # skip drawing when flashing
+            return
 
         rotated = pygame.transform.rotate(self.image, -self.rotation)
         rect = rotated.get_rect(center=(int(self.position.x), int(self.position.y)))
+
+        # Flashing or color overlay
+        draw_overlay = False
+        overlay_color = None
+
+        if self.shield_timer > 0:
+            r, g, b = 135, 206, 250
+            alpha = int(80 + 40 * math.sin(time.time() * 10))
+            alpha = max(0, min(120, alpha))
+            overlay_color = (r, g, b, alpha)
+            draw_overlay = True
+
+        elif self.speed_boost_timer > 0:
+            r, g, b = 173, 255, 47
+            alpha = int(80 + 40 * math.sin(time.time() * 10))
+            alpha = max(0, min(120, alpha))
+            overlay_color = (r, g, b, alpha)
+            draw_overlay = True
+
+        elif self.rapid_fire_timer > 0:
+            r, g, b = 255, 105, 180
+            alpha = int(80 + 40 * math.sin(time.time() * 10))
+            alpha = max(0, min(120, alpha))
+            overlay_color = (r, g, b, alpha)
+            draw_overlay = True
+
         screen.blit(rotated, rect)
+
+        if draw_overlay:
+            overlay = pygame.Surface(rect.size, pygame.SRCALPHA)
+            overlay.fill(overlay_color)
+            screen.blit(overlay, rect)
 
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
@@ -42,7 +74,6 @@ class Player(CircleShape):
     def update(self, dt):
         keys = pygame.key.get_pressed()
 
-        # Handle flashing logic
         if self.flash_timer > 0:
             self.flash_timer -= dt
             if int(self.flash_timer / self.flash_interval) % 2 == 0:
@@ -50,33 +81,49 @@ class Player(CircleShape):
             else:
                 self.visible = True
         else:
-            self.visible = True  # ensure it's visible when not flashing
+            self.visible = True
 
         self.timer -= dt
-        if keys[pygame.K_a]:
+
+        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
             self.rotate(-dt)
-        if keys[pygame.K_d]:
+        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             self.rotate(dt)
-        # Acceleration
-        if keys[pygame.K_w]:
+
+        if keys[pygame.K_w] or keys[pygame.K_UP]:
             direction = pygame.Vector2(0, 1).rotate(self.rotation)
             self.velocity += direction * self.acceleration * dt
-        if keys[pygame.K_s]:
+        if keys[pygame.K_s] or keys[pygame.K_DOWN]:
             direction = pygame.Vector2(0, -1).rotate(self.rotation)
             self.velocity += direction * self.acceleration * dt
 
-        # Apply friction
         self.velocity *= self.friction
 
-        # Clamp to max speed
         if self.velocity.length() > self.max_speed:
             self.velocity.scale_to_length(self.max_speed)
 
-        # Update position
         self.position += self.velocity * dt
+        self.position = wrap_position(self.position, SCREEN_WIDTH, SCREEN_HEIGHT)
 
         if keys[pygame.K_SPACE] and self.timer <= 0:
             self.shoot()
+            self.timer = self.shoot_cooldown
+
+        if self.speed_boost_timer > 0:
+            self.speed_boost_timer -= dt
+            if self.speed_boost_timer <= 0:
+                self.max_speed = PLAYER_SPEED
+
+        if self.rapid_fire_timer > 0:
+            self.rapid_fire_timer -= dt
+            if self.rapid_fire_timer <= 0:
+                self.shoot_cooldown = PLAYER_SHOOT_COOLDOWN
+
+        if self.shield_timer > 0:
+            self.shield_timer -= dt
+            self.shield = True
+            if self.shield_timer <= 0:
+                self.shield = False
 
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -86,4 +133,20 @@ class Player(CircleShape):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         velocity = forward * PLAYER_SHOOT_SPEED
         Shot(self.position.x, self.position.y, velocity)
-        self.timer = PLAYER_SHOOT_COOLDOWN
+        if self.shoot_sound:
+            self.shoot_sound.play()
+        self.timer = self.shoot_cooldown
+
+    def check_collisions(self, other):
+        rect = self.image.get_rect(center=self.position)
+        dist_x = abs(other.position.x - rect.centerx)
+        dist_y = abs(other.position.y - rect.centery)
+
+        if dist_x > (rect.width / 2 + other.radius):
+            return False
+        if dist_y > (rect.height / 2 + other.radius):
+            return False
+        return True
+
+    def get_rect(self):
+        return self.image.get_rect(center=(int(self.position.x), int(self.position.y)))
