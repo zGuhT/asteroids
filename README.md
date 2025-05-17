@@ -111,6 +111,9 @@ astroids/
 
 ## Change Log
 
+### v2.1 (2025-05-17)
+- v2.1 executable created - all done i think
+
 ### v2.04 (2025-05-17)
 - v2.04 fixed readme
 
