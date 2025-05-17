@@ -108,6 +108,9 @@ astroids/
 
 ## Change Log
 
+### v2.01 (2025-05-17)
+- v2.01 cleaned up some of the redundant code and added commenting to explain all the blocks
+
 ### v2.0 (2025-05-17)
 - v2.0 ThomAsteroids - huge update, see readme for all features
 

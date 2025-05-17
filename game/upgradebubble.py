@@ -1,9 +1,10 @@
-# upgradebubble.py
 import pygame
 import random
 from game.constants import *
 
 class UpgradeBubble(pygame.sprite.Sprite):
+    """A powerup bubble that floats around the screen."""
+
     def __init__(self, position, upgrade_type):
         super().__init__()
         self.position = pygame.Vector2(position)

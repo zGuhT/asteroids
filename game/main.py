@@ -1,31 +1,36 @@
 import pygame
 import sys
+import time
+import math
 
 from game.constants import *
-from game.player import *
-from game.asteroid import *
-from game.asteroidfield import *
-from game.shot import *
-from game.functions import *
+from game.player import Player
+from game.asteroid import Asteroid
+from game.asteroidfield import AsteroidField
+from game.shot import Shot
+from game.functions import (
+    load_high_score,
+    save_high_score,
+    draw_multiline_text,
+    show_title_screen,
+    wrap_position,
+)
 
 def main():
+    """Main game loop and logic."""
     pygame.init()
 
-    # Music
+    # Music & sound
     pygame.mixer.init()
     pygame.mixer.music.load("assets/background_music_thomas.mp3")
-    pygame.mixer.music.set_volume(1.0)  # Adjust 0.0 (mute) to 1.0 (full volume)
-    pygame.mixer.music.play(-1)  # -1 = loop forever
-
-    # Sound effects
+    pygame.mixer.music.set_volume(1.0)
+    pygame.mixer.music.play(-1)
     shoot_sound = pygame.mixer.Sound("assets/snd_shoot.wav")
     pop_sound = pygame.mixer.Sound("assets/snd_pop.wav")
     boost_sound = pygame.mixer.Sound("assets/snd_boost.wav")
     bomb_sound = pygame.mixer.Sound("assets/snd_bomb.wav")
-    shoot_sound.set_volume(0.3)
-    pop_sound.set_volume(0.3)
-    boost_sound.set_volume(0.3)
-    bomb_sound.set_volume(0.3)
+    for snd in (shoot_sound, pop_sound, boost_sound, bomb_sound):
+        snd.set_volume(0.3)
 
     # Sprite groups
     updatable = pygame.sprite.Group()
@@ -35,29 +40,29 @@ def main():
     explosions = pygame.sprite.Group()
     upgrade_group = pygame.sprite.Group()
 
-    # Assign groups to sprite classes
+    # Assign groups to sprite classes for auto-registration
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable,)
     Shot.containers = (shots, updatable, drawable)
 
-    # Score tracking
+    # Score and timer variables
     high_score = load_high_score()
     asteroid_score = 0
     timer_score = 0
     total_score = 0
     time_elapsed = 0
 
-    # Other variables
+    # Player lives and state
     player_lives = 3
     player_immunity = False
     player_immunity_timer = 0
     player_bombs = 3
 
-    # Font and display
+    # UI
     font = pygame.font.Font(None, 36)
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("Asteroids")
+    pygame.display.set_caption("Asteroids: Thomas Edition")
     clock = pygame.time.Clock()
     dt = 0
     upgrade_message = ""
@@ -73,7 +78,6 @@ def main():
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, shoot_sound=shoot_sound)
     asteroidfield = AsteroidField()
 
-    pygame.display.set_caption("Asteroids: Thomas Edition")
     show_title_screen(screen, font)
 
     while True:
@@ -81,19 +85,19 @@ def main():
             if event.type == pygame.QUIT:
                 return "quit"
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
+                if event.key in [pygame.K_q, pygame.K_ESCAPE]:
                     return "quit"
                 if event.key == pygame.K_b and player_bombs > 0:
-                    # Bomb logic here!
+                    # Bomb: destroy all asteroids on screen
                     for asteroid in list(asteroids):
-                        asteroid.split(explosions, upgrade_group)  # Or asteroid.kill() for instant removal
+                        asteroid.split(explosions, upgrade_group)
                     player_bombs -= 1
                     bomb_sound.play()
 
-        # Background
+        # Draw background
         screen.blit(background, (0, 0))
 
-        # Update
+        # Update sprites
         updatable.update(dt)
         explosions.update(dt)
         upgrade_group.update(dt)
@@ -113,23 +117,20 @@ def main():
                     player.kill()
                     player_lives -= 1
                     if player_lives == 0:
+                        # Game Over screen
                         if total_score > high_score:
                             high_score = total_score
                             save_high_score(high_score)
                             draw_multiline_text(
                                 screen,
                                 f"New High Score!!!!!\nTimer Score: {timer_score}\nAsteroid Score: {asteroid_score}\nTotal Score: {total_score}\nPress R to Restart\nEsc to Quit",
-                                font,
-                                (255, 255, 255),
-                                (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+                                font, (255, 255, 255), (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
                             )
                         else:
                             draw_multiline_text(
                                 screen,
                                 f"Game Over!\nTimer Score: {timer_score}\nAsteroid Score: {asteroid_score}\nTotal Score: {total_score}\nPress R to Restart\nEsc to Quit",
-                                font,
-                                (255, 255, 255),
-                                (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+                                font, (255, 255, 255), (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
                             )
                         pygame.display.flip()
 
@@ -143,6 +144,7 @@ def main():
                                     if event.key in [pygame.K_ESCAPE, pygame.K_q]:
                                         return "quit"
                     else:
+                        # Respawn with immunity
                         player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
                         player_immunity = True
                         player_immunity_timer = 3
@@ -156,7 +158,7 @@ def main():
                     asteroid_score += score_from_split
                     break
 
-        # Upgrade collision
+        # Upgrade pickup logic
         for upgrade in upgrade_group:
             if player.get_rect().colliderect(upgrade.get_rect()):
                 boost_sound.play()
@@ -172,7 +174,7 @@ def main():
                 upgrade_message = f"{upgrade.type.replace('_', ' ').title()} Activated!"
                 upgrade_message_timer = 2.0
 
-        # Show upgrade message
+        # Display upgrade pickup message
         if upgrade_message_timer > 0:
             upgrade_message_timer -= dt
             msg_surface = font.render(upgrade_message, True, (255, 255, 255))
@@ -199,7 +201,7 @@ def main():
             if player_immunity_timer <= 0:
                 player_immunity = False
 
-        # Score calc
+        # Score
         total_score = timer_score + asteroid_score
 
         # --- BOOST UI: Draw bottom-left ---
@@ -211,7 +213,7 @@ def main():
         if player.shield_timer > 0:
             boost_lines.append(("Shield", player.shield_timer, (135,206,250)))
 
-        # Draw each boost from bottom up, 10px above the bottom edge
+        # Draw each boost
         ui_x = 20
         ui_y_start = SCREEN_HEIGHT - 10
         line_height = font.get_linesize() + 4
@@ -224,7 +226,6 @@ def main():
         # Score display
         score_text = font.render(f"Score: {total_score}", True, (255, 255, 255))
         screen.blit(score_text, (20, 20))
-
         high_score_text = font.render(
             f"High Score: {max(total_score, high_score)}", True, (255, 255, 255)
         )
@@ -238,7 +239,7 @@ def main():
 
         # Bomb display
         bomb_text = font.render(f"Bombs: {player_bombs}", True, (255, 200, 0))
-        bomb_rect = bomb_text.get_rect(topright=(SCREEN_WIDTH - 20, 70))  # Example: top right, below score
+        bomb_rect = bomb_text.get_rect(topright=(SCREEN_WIDTH - 20, 70))
         screen.blit(bomb_text, bomb_rect)
 
         pygame.display.flip()

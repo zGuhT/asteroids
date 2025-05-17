@@ -1,1 +1,2 @@
+# requirements.txt
 pygame>=2.0
