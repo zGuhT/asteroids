@@ -1,6 +1,7 @@
 # asteroid.py
 from game.circleshape import *
-from game.constants import ASTEROID_WIDTH, ASTEROID_MIN_RADIUS
+from game.constants import ASTEROID_WIDTH, ASTEROID_MIN_RADIUS, ASTEROID_MAX_RADIUS
+from game.explosion import ExplosionParticle
 import random
 
 class Asteroid(CircleShape):
@@ -15,7 +16,16 @@ class Asteroid(CircleShape):
     def update(self, dt):
         self.position += self.velocity * dt
 
-    def split(self):
+    def split(self, explosion_group):
+        scale = self.radius / ASTEROID_MAX_RADIUS
+        if self.radius >= ASTEROID_MAX_RADIUS * 0.9:
+            color = (255, 100, 0)
+        elif self.radius > ASTEROID_MIN_RADIUS * 1.5:
+            color = (255, 200, 50)
+        else:
+            color = (255, 255, 255)
+        for _ in range(int(10 * scale) + 5):
+            explosion_group.add(ExplosionParticle(self.position, scale, color))
         self.kill()
         if self.radius <= ASTEROID_MIN_RADIUS:
             print(f"Splitting asteroid with radius: {self.radius}")

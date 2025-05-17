@@ -95,6 +95,9 @@ astroids/
 
 ## Change Log
 
+### v1.3 (2025-05-17)
+- v1.3 asteroids added explosion effect and heart image for remaining lives
+
 ### v1.212001 (2025-05-16)
 - G: v1.212001 updated readme AGAIN again (i swear this is the last)
 

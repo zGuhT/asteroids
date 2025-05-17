@@ -17,6 +17,7 @@ def main():
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
+    explosions = pygame.sprite.Group()
 
     # Assign groups to sprite classes
     Player.containers = (updatable, drawable)
@@ -43,6 +44,10 @@ def main():
     clock = pygame.time.Clock()
     dt = 0
 
+    # Assets
+    heart_image = pygame.image.load("assets/heart.png").convert_alpha()
+    heart_image = pygame.transform.scale(heart_image, (48, 48))  # Resize if needed
+
     # Game objects
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     asteroidfield = AsteroidField()
@@ -58,6 +63,7 @@ def main():
 
         # Update all updatable objects
         updatable.update(dt)
+        explosions.update(dt)
 
         # Collision detection
         for asteroid in asteroids:
@@ -110,13 +116,15 @@ def main():
             for shot in shots:
                 if asteroid.check_collisions(shot):
                     shot.kill()
-                    score_from_split = asteroid.split()
+                    score_from_split = asteroid.split(explosions)
                     asteroid_score += score_from_split
                     break  # Avoid multiple hits on same asteroid
 
         # Draw everything
         for obj in drawable:
             obj.draw(screen)
+        for particle in explosions:
+            particle.draw(screen)
 
         # Timer-based score (1 point per second)
         dt = clock.tick(60) / 1000
@@ -145,15 +153,10 @@ def main():
         high_score_rect = high_score_text.get_rect(topright=(SCREEN_WIDTH - 20, 20))  # 20px padding from top-right corner
         screen.blit(high_score_text, high_score_rect)
 
-        # Render remaining lives
-        if player_lives == 3:
-            remaining_lives_text = font.render(f"Remaining Lives ({player_lives}):  <3  <3  <3", True, (255, 255, 255))
-        elif player_lives == 2:
-            remaining_lives_text = font.render(f"Remaining Lives ({player_lives}):  <3  <3", True, (255, 255, 255))
-        else:
-            remaining_lives_text = font.render(f"Remaining Lives ({player_lives}):  <3", True, (255, 255, 255))
-        remaining_lives_rect = remaining_lives_text.get_rect(midtop=(SCREEN_WIDTH / 2, 20))  # 20px padding from top-centre
-        screen.blit(remaining_lives_text, remaining_lives_rect)
+        # Draw heart icons for remaining lives
+        for i in range(player_lives):
+            x = SCREEN_WIDTH // 2 - (player_lives * 14) + i * 28  # Centered row of hearts
+            screen.blit(heart_image, (x, 20))
 
         # Update display
         pygame.display.flip()
